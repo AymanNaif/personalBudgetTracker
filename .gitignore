@@ -1,0 +1,16 @@
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+
+# Log files
+*.log
+
+# Build output
+/build
+/dist
+node_modules
+
+# expo
+.expo
