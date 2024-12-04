@@ -22,20 +22,20 @@ const DashboardScreen = ({ navigation }: any) => {
 
   // Calculate total income, expenses, and balance
   const totalIncome = transactions
-    .filter((transaction: Transaction) => transaction.amount > 0)
+    .filter((transaction: Transaction) => transaction.type === "income")
     .reduce(
       (acc: number, transaction: Transaction) => acc + transaction.amount,
       0
     );
 
   const totalExpenses = transactions
-    .filter((transaction: Transaction) => transaction.amount < 0)
+    .filter((transaction: Transaction) => transaction.type === "expense")
     .reduce(
       (acc: number, transaction: Transaction) => acc + transaction.amount,
       0
     );
 
-  const balance = totalIncome + totalExpenses;
+  const balance = totalIncome - totalExpenses;
 
   const categoryData = transactions.reduce(
     (acc: any, transaction: Transaction) => {
@@ -85,7 +85,7 @@ const chartConfig = {
   backgroundColor: "#e26a00",
   backgroundGradientFrom: "#fb8c00",
   backgroundGradientTo: "#ffa726",
-  decimalPlaces: 2, // Optional, defaults to 2
+  decimalPlaces: 2,
   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   style: {

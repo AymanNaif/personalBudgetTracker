@@ -10,8 +10,6 @@ const TransactionFormScreen = () => {
   const transactions = useSelector((state: any) => state.budget.transactions);
 
   const handleTransactionSubmit = (transaction: Transaction) => {
-    console.log(transaction);
-
     dispatch(addTransaction(transaction));
   };
 
@@ -26,6 +24,7 @@ const TransactionFormScreen = () => {
         renderItem={({ item }) => (
           <View style={styles.transactionItem}>
             <Text style={styles.transactionText}>{item.description}</Text>
+            <Text style={styles.transactionText}>{item.type}</Text>
             <Text style={styles.transactionText}>{item.amount} $</Text>
           </View>
         )}

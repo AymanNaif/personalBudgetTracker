@@ -6,6 +6,7 @@ export interface Transaction {
   amount: number;
   date: string;
   category: string;
+  type: 'income' | 'expense';
 }
 
 interface BudgetState {
@@ -31,7 +32,7 @@ const budgetSlice = createSlice({
     },
     addTransaction: (state, action: PayloadAction<Transaction>) => {
       state.transactions.push(action.payload);
-      if (action.payload.amount > 0) {
+      if (action.payload.type === 'income') {
         state.income += action.payload.amount;
       } else {
         state.expenses += action.payload.amount;

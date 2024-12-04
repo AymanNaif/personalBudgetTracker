@@ -4,8 +4,8 @@ import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Picker } from "@react-native-picker/picker";
+import { postData } from "../services/api";
 
-// Define the schema using zod
 const transactionSchema = z.object({
   description: z.string().min(1, "Description is required"),
   amount: z
@@ -17,7 +17,7 @@ const transactionSchema = z.object({
     .min(1, "Date is required")
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in the format YYYY-MM-DD"),
   category: z.string().min(1, "Category is required"),
-  transactionType: z.enum(["income", "expense"], {
+  type: z.enum(["income", "expense"], {
     errorMap: () => ({ message: "Please select income or expense" }),
   }),
 });
@@ -27,7 +27,7 @@ type FormData = {
   amount: string;
   date: string;
   category: string;
-  transactionType: "income" | "expense";
+  type: "income" | "expense";
 };
 
 const TransactionForm = ({
@@ -41,16 +41,21 @@ const TransactionForm = ({
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(transactionSchema),
-    mode: "onSubmit", // Ensure validation happens on submit
+    mode: "onSubmit",
   });
 
-  const handleFormSubmit = (data: FormData) => {
+  const handleFormSubmit = async (data: FormData) => {
     const transaction = {
       id: Date.now().toString(),
       ...data,
       amount: parseFloat(data.amount),
     };
-    onSubmit(transaction);
+
+    try {
+      const response = await postData("allExpenses", transaction);
+    } catch (error) {
+      console.error("Error", "Failed to add transaction.");
+    }
   };
 
   return (
@@ -125,7 +130,7 @@ const TransactionForm = ({
         )}
       />
       <Controller
-        name="transactionType"
+        name="type"
         control={control}
         render={({ field: { onChange, value } }) => (
           <>
@@ -138,10 +143,8 @@ const TransactionForm = ({
               <Picker.Item label="Income" value="income" />
               <Picker.Item label="Expense" value="expense" />
             </Picker>
-            {errors.transactionType && (
-              <Text style={styles.errorText}>
-                {errors.transactionType.message}
-              </Text>
+            {errors.type && (
+              <Text style={styles.errorText}>{errors.type.message}</Text>
             )}
           </>
         )}
